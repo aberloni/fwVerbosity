@@ -1,0 +1,20 @@
+{
+  "name": "com.ab.fwp.verbosity",
+  "version": "0.2.1",
+  "displayName": "ab:verbosity",
+  "description": "extending unity",
+  "keywords": [
+    "prototype",
+    "framework"
+  ],
+  "category": "tools",
+  "repository": {
+    "url": "https://github.com/Legogo/fwVerbosity.git",
+    "type": "git"
+  },
+  "author": {
+    "name": "Andrei Berloni",
+    "email": "dev@andreberlemont.com",
+    "url": "http://www.andreberlemont.com"
+  }
+}
