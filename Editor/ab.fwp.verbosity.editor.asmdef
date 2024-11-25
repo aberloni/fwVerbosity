@@ -1,0 +1,18 @@
+{
+    "name": "ab.fwp.verbosity.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a4363d42f3132e84dbaa0793e172b82a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
