@@ -34,7 +34,7 @@ namespace fwp.verbosity
         /// <summary>
         /// function to override to add more types to feature
         /// </summary>
-        virtual protected List<Type> getInjectionCandidates() 
+        virtual protected List<Type> getInjectionCandidates()
             => new List<Type>() { typeof(VerbositySectionUniversal) };
 
         List<Enum> injectKeys()
@@ -70,17 +70,15 @@ namespace fwp.verbosity
 
             drawHeader();
 
-            GUILayout.Label("Verbosity toggles (x" + keys.Length + ")");
-
             // each possible enums
-            foreach (var key in keys)
+            for (int i = 0; i < keys.Length; i++)
             {
                 //GUILayout.BeginHorizontal();
                 //GUILayout.Label(key.ToString());
+                
+                Enum pv = Verbosity.getMaskEnum(keys[i]);
 
-                Enum pv = Verbosity.getMaskEnum(key);
-
-                var label = key.GetType().Name;
+                var label = keys[i].GetType().Name;
                 Enum nv = EditorGUILayout.EnumFlagsField(label, pv);
 
                 if (pv != nv)
@@ -94,10 +92,25 @@ namespace fwp.verbosity
         }
 
         virtual protected void drawHeader()
-        { }
+        {
+
+            GUILayout.Label("Verbosity toggles (x" + keys.Length + ")");
+
+            /*
+            if (GUILayout.Button("reset"))
+            {
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    keys[i] = (Enum)Enum.ToObject(keys[i].GetType(), 0);
+                    //keys[i] = (Enum)(object)0;
+                }
+            }
+            */
+
+        }
 
         virtual protected void drawFooter()
-        { 
+        {
         }
 
         public static Array GetUnderlyingEnumValues(Type type)

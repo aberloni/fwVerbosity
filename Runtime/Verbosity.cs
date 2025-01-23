@@ -9,20 +9,24 @@ using UnityEditor;
 
 namespace fwp.verbosity
 {
-
+    /// <summary>
+    /// The following color names are supported:
+    /// black, blue, green, orange, purple, red, white, and yellow.
+    /// </summary>
     [System.Flags]
     public enum VerbositySectionUniversal
     {
-        none            = 0,
-        engine          = 1,
-        loading         = 2,
+        none = 0,
+        engine = 1 << 1,
+        loading = 1 << 2,
 
-        input           = 4,
-        addressables    = 8,
-        audio           = 16,
-        localization    = 32,
+        input = 1 << 3,
+        addressables = 1 << 4,
+        audio = 1 << 5,
+        localization = 1 << 6,
 
-        shader          = 64,
+        shader = 1 << 7,
+        all = ~0,
     }
 
     /// <summary>
@@ -31,6 +35,11 @@ namespace fwp.verbosity
     public class Verbosity
     {
         const string _ppref_prefix = "ppref_";
+
+        public const string color_pink_light = "ec3ef2";
+        public const string color_green_light = "7df27f";
+        public const string color_red_light = "f23e3e";
+        public const string color_blue_light = "3e83f2";
 
         // Enum type & bitmask
         static Dictionary<Type, int> toggles = new Dictionary<Type, int>();
@@ -45,7 +54,7 @@ namespace fwp.verbosity
         {
             //Type t = enumType.GetType();
 #if UNITY_EDITOR
-            if (Application.isEditor) 
+            if (Application.isEditor)
                 return EditorPrefs.GetInt(
                     _ppref_prefix + enumType, 0);
 #endif
@@ -105,8 +114,46 @@ namespace fwp.verbosity
 #endif
         }
 
+        /// <summary>
+        /// unfiltered log, visible in build
+        /// major app event
+        /// </summary>
+        static public void logApp(string context, string msg, object tar = null)
+        {
+            if (!string.IsNullOrEmpty(context))
+            {
+                msg = $"<b><color={color_blue_light}>{context.ToUpper()}</color></b>" + msg;
+            }
+            Verbosity.ulog(msg, tar);
+        }
 
-        static public void logNone(string content, object context = null, string hex = null) 
+        /// <summary>
+        /// unfiltered log, visible in build
+        /// major game flow event
+        /// </summary>
+        static public void logFlowPillar(string msg, object tar = null, string context = null)
+        {
+            if (!string.IsNullOrEmpty(context))
+            {
+                msg = $"<b><color={color_green_light}>{context.ToUpper()}</color></b>" + msg;
+            }
+            Verbosity.ulog(msg, tar);
+        }
+
+        /// <summary>
+        /// unfiltered log, visible in build
+        /// major game flow event
+        /// </summary>
+        static public void logIssue(string msg, object tar = null, string context = null)
+        {
+            if (!string.IsNullOrEmpty(context))
+            {
+                msg = $"<b><color={color_red_light}>{context.ToUpper()}</color></b>" + msg;
+            }
+            Verbosity.ulog(msg, tar);
+        }
+
+        static public void logNone(string content, object context = null, string hex = null)
             => logEnum(VerbositySectionUniversal.none, content, context, hex);
 
         /// <summary>
@@ -120,40 +167,51 @@ namespace fwp.verbosity
 
         const string _tab = "   ";
         const string _separator = ">";
+        const string _space = " ";
 
-        static protected void logEnum(Enum enumValue, string content, object context = null, string hex = null)
+        static protected void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
         {
             bool toggled = isToggled(enumValue);
 
             if (!toggled)
                 return;
 
-            // num
-            string stamp = Time.frameCount + _separator;
-
-            // cat
-            if (!string.IsNullOrEmpty(hex)) stamp += "<color=#" + hex + ">";
-
-            stamp += enumValue.ToString();
-
-            if (!string.IsNullOrEmpty(hex)) stamp += "</color>";
-
-            stamp += _separator;
-
-            // name
-            if(context != null)
+            if (enumValue != null)
             {
-                stamp += context.GetType();
-                UnityEngine.Object uo = context as UnityEngine.Object;
+                string stamp = string.Empty;
+
+                // cat
+                if (!string.IsNullOrEmpty(hex)) stamp += "<b><color=#" + hex + ">";
+
+                stamp += enumValue.ToString();
+
+                if (!string.IsNullOrEmpty(hex)) stamp += "</color></b>";
+
+                stamp += _separator;
+
+                msg = stamp + msg;
+            }
+
+            ulog(msg, context, hex);
+        }
+
+        static protected void ulog(string msg, object tar = null, string hex = null)
+        {
+            string stamp = $"({Time.frameCount})" + _space; // (fframe count)  
+
+            UnityEngine.Object uo = tar as UnityEngine.Object;
+
+            if (tar != null)
+            {
+                stamp += tar.GetType();
                 if (uo != null) stamp += ":" + uo.name;
                 stamp += _separator;
             }
 
-            // separator
-            stamp += _tab;
+            stamp += _tab; // separator
 
-            //Debug.Log($"{tar}    <color=#888888> >>>> </color> " + content, tar as Object);
-            Debug.Log(stamp + content, context as UnityEngine.Object);
+            Debug.Log(stamp + msg, uo);
         }
     }
 }
+
