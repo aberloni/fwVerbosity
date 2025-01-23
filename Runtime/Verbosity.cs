@@ -118,26 +118,26 @@ namespace fwp.verbosity
         /// unfiltered log, visible in build
         /// major app event
         /// </summary>
-        static public void logApp(string context, string msg, object tar = null)
+        static public void logApp(string context, string msg)
         {
             if (!string.IsNullOrEmpty(context))
             {
                 msg = $"<b><color={color_blue_light}>{context.ToUpper()}</color></b>" + msg;
             }
-            Verbosity.ulog(msg, tar);
+            Verbosity.ulog(msg);
         }
 
         /// <summary>
         /// unfiltered log, visible in build
         /// major game flow event
         /// </summary>
-        static public void logFlowPillar(string msg, object tar = null, string context = null)
+        static public void logFlowPillar(string context, string msg)
         {
             if (!string.IsNullOrEmpty(context))
             {
                 msg = $"<b><color={color_green_light}>{context.ToUpper()}</color></b>" + msg;
             }
-            Verbosity.ulog(msg, tar);
+            Verbosity.ulog(msg);
         }
 
         /// <summary>
