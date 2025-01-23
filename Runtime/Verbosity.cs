@@ -36,6 +36,8 @@ namespace fwp.verbosity
     {
         const string _ppref_prefix = "ppref_";
 
+        const string _tab = "   ";
+
         public const string color_pink_light = "ec3ef2";
         public const string color_green_light = "7df27f";
         public const string color_red_light = "f23e3e";
@@ -114,44 +116,28 @@ namespace fwp.verbosity
 #endif
         }
 
+        static string wrapHexColor(string context, string hex)
+        {
+            return $" <b><color=#{hex}>{context}</color></b> ";
+        }
+
         /// <summary>
         /// unfiltered log, visible in build
         /// major app event
         /// </summary>
-        static public void logApp(string context, string msg)
-        {
-            if (!string.IsNullOrEmpty(context))
-            {
-                msg = $"<b><color={color_blue_light}>{context.ToUpper()}</color></b>" + msg;
-            }
-            Verbosity.ulog(msg);
-        }
+        static public void logApp(string context, string msg) => ulog(wrapHexColor(context, color_blue_light) + _tab + msg);
 
         /// <summary>
         /// unfiltered log, visible in build
         /// major game flow event
         /// </summary>
-        static public void logFlowPillar(string context, string msg)
-        {
-            if (!string.IsNullOrEmpty(context))
-            {
-                msg = $"<b><color={color_green_light}>{context.ToUpper()}</color></b>" + msg;
-            }
-            Verbosity.ulog(msg);
-        }
+        static public void logFlowPillar(string context, string msg) => ulog(wrapHexColor(context, color_green_light) + _tab + msg);
 
         /// <summary>
         /// unfiltered log, visible in build
         /// major game flow event
         /// </summary>
-        static public void logIssue(string msg, object tar = null, string context = null)
-        {
-            if (!string.IsNullOrEmpty(context))
-            {
-                msg = $"<b><color={color_red_light}>{context.ToUpper()}</color></b>" + msg;
-            }
-            Verbosity.ulog(msg, tar);
-        }
+        static public void logIssue(string context, string msg) => ulog(wrapHexColor(context, color_red_light) + _tab + msg);
 
         static public void logNone(string content, object context = null, string hex = null)
             => logEnum(VerbositySectionUniversal.none, content, context, hex);
@@ -165,10 +151,6 @@ namespace fwp.verbosity
         static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
             => logEnum(enumValue, content, context, hex);
 
-        const string _tab = "   ";
-        const string _separator = ">";
-        const string _space = " ";
-
         static protected void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
         {
             bool toggled = isToggled(enumValue);
@@ -178,26 +160,15 @@ namespace fwp.verbosity
 
             if (enumValue != null)
             {
-                string stamp = string.Empty;
-
-                // cat
-                if (!string.IsNullOrEmpty(hex)) stamp += "<b><color=#" + hex + ">";
-
-                stamp += enumValue.ToString();
-
-                if (!string.IsNullOrEmpty(hex)) stamp += "</color></b>";
-
-                stamp += _separator;
-
-                msg = stamp + msg;
+                msg = wrapHexColor(enumValue.ToString(), hex) + msg;
             }
 
-            ulog(msg, context, hex);
+            ulog(msg, context);
         }
 
-        static protected void ulog(string msg, object tar = null, string hex = null)
+        static protected void ulog(string msg, object tar = null)
         {
-            string stamp = $"({Time.frameCount})" + _space; // (fframe count)  
+            string stamp = $"({Time.frameCount})" + _tab; // (fframe count)  
 
             UnityEngine.Object uo = tar as UnityEngine.Object;
 
@@ -205,13 +176,21 @@ namespace fwp.verbosity
             {
                 stamp += tar.GetType();
                 if (uo != null) stamp += ":" + uo.name;
-                stamp += _separator;
             }
 
             stamp += _tab; // separator
 
             Debug.Log(stamp + msg, uo);
         }
+
+        [MenuItem("Window/Verbosity/test logs")]
+        static protected void testLogs()
+        {
+            Verbosity.logApp("app", "things to say");
+            Verbosity.logFlowPillar("flow", "things to say");
+            Verbosity.logIssue("issue", "things to say");
+        }
     }
+
 }
 
