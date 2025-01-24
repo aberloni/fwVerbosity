@@ -9,7 +9,7 @@ namespace fwp.verbosity
     public class WinEdVerbosity : EditorWindow
     {
         [MenuItem("Window/(window) verbosity")]
-        static protected void init() => EditorWindow.GetWindow<WinEdVerbosity>();
+        static protected void initVerbosity() => EditorWindow.GetWindow<WinEdVerbosity>();
 
         Enum[] keys;
 
