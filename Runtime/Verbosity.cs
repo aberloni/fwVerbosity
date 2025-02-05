@@ -186,6 +186,7 @@ namespace fwp.verbosity
             Debug.Log(stamp + msg, uo);
         }
 
+#if UNITY_EDITOR
         [MenuItem("Window/Verbosity/test logs")]
         static protected void testLogs()
         {
@@ -193,6 +194,7 @@ namespace fwp.verbosity
             Verbosity.logFlowPillar("flow", "things to say");
             Verbosity.logIssue("issue", "things to say");
         }
+#endif
     }
 
 }
