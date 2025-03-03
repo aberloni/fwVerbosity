@@ -9,6 +9,21 @@ using UnityEditor;
 
 namespace fwp.verbosity
 {
+
+    public interface iVerbose
+    {
+
+        public enum VerbLevel
+        {
+            none = 0,
+            verbose = 1,
+            deep = 2,
+        }
+
+        public bool isVerbose(VerbLevel lvl);
+        public string stamp();
+    }
+
     /// <summary>
     /// The following color names are supported:
     /// black, blue, green, orange, purple, red, white, and yellow.
@@ -125,21 +140,24 @@ namespace fwp.verbosity
         /// unfiltered log, visible in build
         /// major app event
         /// </summary>
-        static public void logApp(string context, string msg) 
+        static public void logApp(string context, string msg)
             => ulog(wrapHexColor("app." + context, color_blue_light) + _tab + _tab + msg);
 
         /// <summary>
         /// unfiltered log, visible in build
         /// major game flow event
         /// </summary>
-        static public void logFlowPillar(string context, string msg) 
+        static public void logFlowPillar(string context, string msg)
             => ulog(wrapHexColor("flow." + context, color_green_light) + _tab + _tab + msg);
+
+        static public void logInput(string context, string msg)
+            => ulog(wrapHexColor("input." + context, color_blue_light) + _tab + _tab + msg);
 
         /// <summary>
         /// unfiltered log, visible in build
         /// major game flow event
         /// </summary>
-        static public void logIssue(string context, string msg) 
+        static public void logIssue(string context, string msg)
             => ulog(wrapHexColor("issue." + context, color_red_light) + _tab + _tab + msg);
 
         static public void logNone(string content, object context = null, string hex = null)
