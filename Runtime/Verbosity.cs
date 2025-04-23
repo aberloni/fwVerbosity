@@ -24,8 +24,9 @@ namespace fwp.verbosity
         addressables = 1 << 4,
         audio = 1 << 5,
         localization = 1 << 6,
+        ui = 1 << 7,
 
-        shader = 1 << 7,
+        shader = 1 << 8,
         all = ~0,
     }
 
