@@ -6,124 +6,88 @@ using System;
 
 namespace fwp.verbosity
 {
-    public class WinEdVerbosity : EditorWindow
-    {
-        [MenuItem("Window/(window) verbosity")]
-        static protected void initVerbosity() => EditorWindow.GetWindow<WinEdVerbosity>();
+	public class WinEdVerbosity : EditorWindow
+	{
+		[MenuItem("Window/(window) verbosity")]
+		static protected void initVerbosity() => EditorWindow.GetWindow<WinEdVerbosity>();
 
-        Enum[] keys;
+		Type[] enumTypes = null;
 
-        private void OnEnable()
-        {
-            refresh(true);
-        }
+		private void OnEnable()
+		{
+			enumTypes = getInjectionCandidates().ToArray();
+			//refresh(true);
+		}
 
-        private void OnFocus()
-        {
-            refresh(true);
-        }
+		private void OnFocus()
+		{
+			enumTypes = getInjectionCandidates().ToArray();
+			//refresh(true);
+		}
 
-        void refresh(bool force)
-        {
-            if (keys == null || force)
-            {
-                keys = injectKeys().ToArray();
-            }
-        }
+		/// <summary>
+		/// function to override to add more types to feature
+		/// </summary>
+		virtual protected List<Type> getInjectionCandidates()
+			=> new List<Type>() { typeof(VerbositySectionUniversal) };
 
-        /// <summary>
-        /// function to override to add more types to feature
-        /// </summary>
-        virtual protected List<Type> getInjectionCandidates()
-            => new List<Type>() { typeof(VerbositySectionUniversal) };
+		/// <summary>
+		/// win editor draw
+		/// </summary>
+		void OnGUI()
+		{
+			drawHeader();
 
-        List<Enum> injectKeys()
-        {
-            var ret = new List<Enum>();
+			// each possible enums
+			for (int i = 0; i < enumTypes.Length; i++)
+			{
+				// extract value
+				Enum eval = Verbosity.convertIntToEnum(enumTypes[i], Verbosity.getToggleValue(enumTypes[i]));
 
-            foreach (var t in getInjectionCandidates())
-            {
-                injectEnum(t, ret);
-            }
+				// draw
+				Enum nv = EditorGUILayout.EnumFlagsField(enumTypes[i].Name, eval);
 
-            return ret;
-        }
+				if (eval != nv)
+				{
+					Debug.Log("from:" + eval);
+					Debug.Log("to:" + nv);
 
-        void injectEnum(Type t, List<Enum> list)
-        {
-            var enumValue = (Enum)System.Activator.CreateInstance(t);
-            list.Add(enumValue);
-        }
+					Verbosity.toggle(nv);
+				}
+			}
 
-        //void injectEnum<E>(List<Enum> list) where E : Enum => injectEnum(typeof(E), list);
+			drawFooter();
+		}
 
-        /// <summary>
-        /// win editor draw
-        /// </summary>
-        void OnGUI()
-        {
-            if (keys == null)
-            {
-                GUILayout.Label("view not ready");
-                return;
-            }
+		virtual protected void drawHeader()
+		{
+			GUILayout.Label("Verbosity toggles (x" + enumTypes.Length + ")");
 
-            drawHeader();
+			if (GUILayout.Button("reset"))
+			{
+				for (int i = 0; i < enumTypes.Length; i++)
+				{
+					Enum val = (Enum)Enum.ToObject(enumTypes[i], 0);
+					Verbosity.toggle(Verbosity.getMaskEnum(enumTypes[i]));
+				}
+			}
+		}
 
-            // each possible enums
-            for (int i = 0; i < keys.Length; i++)
-            {
-                //GUILayout.BeginHorizontal();
-                //GUILayout.Label(key.ToString());
-                
-                Enum pv = Verbosity.getMaskEnum(keys[i]);
+		virtual protected void drawFooter()
+		{
+		}
 
-                var label = keys[i].GetType().Name;
-                Enum nv = EditorGUILayout.EnumFlagsField(label, pv);
-
-                if (pv != nv)
-                {
-                    Verbosity.toggle(nv);
-                }
-
-            }
-
-            drawFooter();
-        }
-
-        virtual protected void drawHeader()
-        {
-
-            GUILayout.Label("Verbosity toggles (x" + keys.Length + ")");
-
-            /*
-            if (GUILayout.Button("reset"))
-            {
-                for (int i = 0; i < keys.Length; i++)
-                {
-                    keys[i] = (Enum)Enum.ToObject(keys[i].GetType(), 0);
-                    //keys[i] = (Enum)(object)0;
-                }
-            }
-            */
-
-        }
-
-        virtual protected void drawFooter()
-        {
-        }
-
-        public static Array GetUnderlyingEnumValues(Type type)
-        {
-            Array values = Enum.GetValues(type);
-            Type underlyingType = Enum.GetUnderlyingType(type);
-            Array arr = Array.CreateInstance(underlyingType, values.Length);
-            for (int i = 0; i < values.Length; i++)
-            {
-                arr.SetValue(values.GetValue(i), i);
-            }
-            return arr;
-        }
-    }
+		public static Array GetUnderlyingEnumValues(Type type)
+		{
+			Array values = Enum.GetValues(type);
+			Type underlyingType = Enum.GetUnderlyingType(type);
+			Array arr = Array.CreateInstance(underlyingType, values.Length);
+			for (int i = 0; i < values.Length; i++)
+			{
+				arr.SetValue(values.GetValue(i), i);
+			}
+			return arr;
+		}
+	}
 
 }
