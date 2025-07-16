@@ -105,7 +105,7 @@ namespace fwp.verbosity
 		{
 			Type t = enumSpecificValue.GetType();
 
-			int local = toggles[t];
+			int local = getToggleValue(t);
 
 			// dico/pref stored value
 			var dVal = (Enum)Enum.ToObject(t, local);
