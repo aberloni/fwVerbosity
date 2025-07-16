@@ -97,7 +97,7 @@ namespace fwp.verbosity
 		static public void toggle(Enum flag)
 		{
 			toggles[flag.GetType()] = getMaskInt(flag);
-			Debug.Log("toggle	" + flag + " & " + toggles[flag.GetType()]);
+			//Debug.Log("toggle	" + flag + " & " + toggles[flag.GetType()]);
 			save(flag);
 		}
 
@@ -124,7 +124,7 @@ namespace fwp.verbosity
 			if (!toggles.ContainsKey(enumType))
 			{
 				toggles.Add(enumType, load(enumType));
-				Debug.Log("load	#" + toggles[enumType]);
+				//Debug.Log("load	#" + toggles[enumType]);
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace fwp.verbosity
 			int sVal = (int)Enum.ToObject(t, flag);
 
 			EditorPrefs.SetInt(_ppref_prefix + t.ToString(), sVal);
-			Debug.Log("save	#" + flag.GetType() + "=" + flag + " & " + sVal);
+			//Debug.Log("save	#" + flag.GetType() + "=" + flag + " & " + sVal);
 #endif
 		}
 

@@ -49,8 +49,7 @@ namespace fwp.verbosity
 
 				if (eval != nv)
 				{
-					Debug.Log("from:" + eval);
-					Debug.Log("to:" + nv);
+					Debug.Log("enum changed	" + nv);
 
 					Verbosity.toggle(nv);
 				}
