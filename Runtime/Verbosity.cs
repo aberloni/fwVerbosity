@@ -48,16 +48,16 @@ namespace fwp.verbosity
 	/// <summary>
 	/// a manager to toggle sections of verbosity
 	/// </summary>
-	public class Verbosity
+	static public class Verbosity
 	{
 		public const string _ppref_prefix = "ppref_";
 
-		const string _tab = "   ";
+		public const string _tab = "   ";
 
-		public const string color_pink_light = "ec3ef2";
-		public const string color_green_light = "7df27f";
-		public const string color_red_light = "f23e3e";
-		public const string color_blue_light = "3e83f2";
+		public const string color_pink_light = "ec3ef2"; // input
+		public const string color_green_light = "7df27f"; // flow
+		public const string color_red_light = "f23e3e"; // issue
+		public const string color_blue_light = "3e83f2"; // app
 
 		/// <summary>
 		/// Enum type & bitmask
@@ -164,17 +164,24 @@ namespace fwp.verbosity
 		/// major app event
 		/// </summary>
 		static public void logApp(string context, string msg)
-			=> ulog(wrapHexColor("app." + context, color_blue_light) + _tab + _tab + msg);
-
+			=> logCategory("app", context, msg, color_blue_light);
+		
 		/// <summary>
 		/// unfiltered log, visible in build
 		/// major game flow event
 		/// </summary>
 		static public void logFlowPillar(string context, string msg)
-			=> ulog(wrapHexColor("flow." + context, color_green_light) + _tab + _tab + msg);
+			=> logCategory("flow", context, msg, color_green_light);
 
-		static public void logInput(string context, string msg)
-			=> ulog(wrapHexColor("input." + context, color_blue_light) + _tab + _tab + msg);
+		static public void logInput(string context, string msg) 
+			=> logCategory("input", context, msg, color_pink_light);
+
+		static void logCategory(string category, string context, string msg, string color)
+		{
+			msg = wrapHexColor(category+"." + context, color) + _tab + _tab + msg;
+			VerbosityBroadcast.logEvent(category, msg);
+			ulog(msg);
+		}
 
 		/// <summary>
 		/// unfiltered log, visible in build
@@ -195,7 +202,7 @@ namespace fwp.verbosity
 		static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
 			=> logEnum(enumValue, content, context, hex);
 
-		static protected void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
+		static void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
 		{
 			bool toggled = isToggled(enumValue);
 
@@ -210,7 +217,7 @@ namespace fwp.verbosity
 			ulog(msg, context);
 		}
 
-		static protected void ulog(string msg, object tar = null)
+		static void ulog(string msg, object tar = null)
 		{
 			string stamp = $"({Time.frameCount})" + _tab; // (fframe count)  
 
@@ -229,13 +236,46 @@ namespace fwp.verbosity
 
 #if UNITY_EDITOR
 		[MenuItem("Window/Verbosity/test logs")]
-		static protected void testLogs()
+		static void miTestLogs()
 		{
 			Verbosity.logApp("app", "things to say");
 			Verbosity.logFlowPillar("flow", "things to say");
 			Verbosity.logIssue("issue", "things to say");
 		}
 #endif
+	}
+
+	static public class VerbosityBroadcast
+	{
+
+		/// <summary>
+		/// sub a callback to an enum to receive matching logs
+		/// </summary>
+		static Dictionary<string, Action<string>> eventBroadcast = new();
+
+		static public void subLogMessage(string category, Action<string> callback)
+		{
+			if (!eventBroadcast.ContainsKey(category))
+			{
+				eventBroadcast.Add(category, null);
+			}
+
+			eventBroadcast[category] += callback;
+		}
+
+		static public void unsubLogMessage(string category, Action<string> callback)
+		{
+			if (!eventBroadcast.ContainsKey(category)) return;
+			eventBroadcast[category] -= callback;
+		}
+
+		static public void logEvent(string category, string msg)
+		{
+			if(eventBroadcast.ContainsKey(category))
+			{
+				eventBroadcast[category]?.Invoke(msg);
+			}
+		}
 	}
 
 }
