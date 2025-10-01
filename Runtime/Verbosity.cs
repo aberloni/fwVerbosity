@@ -176,19 +176,19 @@ namespace fwp.verbosity
 		static public void logInput(string context, string msg) 
 			=> logCategory("input", context, msg, color_pink_light);
 
+		/// <summary>
+		/// unfiltered log, visible in build
+		/// major game flow event
+		/// </summary>
+		static public void logIssue(string context, string msg)
+			=> logCategory("issue", context, msg, color_red_light);
+
 		static void logCategory(string category, string context, string msg, string color)
 		{
 			msg = wrapHexColor(category+"." + context, color) + _tab + _tab + msg;
 			VerbosityBroadcast.logEvent(category, msg);
 			ulog(msg);
 		}
-
-		/// <summary>
-		/// unfiltered log, visible in build
-		/// major game flow event
-		/// </summary>
-		static public void logIssue(string context, string msg)
-			=> ulog(wrapHexColor("issue." + context, color_red_light) + _tab + _tab + msg);
 
 		static public void logNone(string content, object context = null, string hex = null)
 			=> logEnum(VerbositySectionUniversal.none, content, context, hex);
