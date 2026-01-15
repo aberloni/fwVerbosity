@@ -107,12 +107,23 @@ namespace fwp.verbosity
 		}
 
 		/// <summary>
+		/// clear single channel
+		/// </summary>
+		static public void clear(Type eType)
+		{
+			if(toggles.ContainsKey(eType))
+			{
+				toggles[eType] = 0;
+			}
+		}
+
+		/// <summary>
 		/// set enum to single value
 		/// </summary>
 		static public void toggle(Enum flag)
 		{
 			// todo : don't replace, overlap
-			
+
 			toggles[flag.GetType()] = getMaskInt(flag);
 			//Debug.Log("toggle	" + flag + " & " + toggles[flag.GetType()]);
 			save(flag);
