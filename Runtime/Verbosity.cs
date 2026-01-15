@@ -94,13 +94,33 @@ namespace fwp.verbosity
 			return toggles[t];
 		}
 
+		/// <summary>
+		/// reset all enums to 0
+		/// </summary>
+		static public void clear()
+		{
+			foreach(var to in toggles)
+			{
+				Enum val = (Enum)Enum.ToObject(to.Key, 0);
+				Verbosity.toggle(Verbosity.getMaskEnum(to.Key));
+			}
+		}
+
+		/// <summary>
+		/// set enum to single value
+		/// </summary>
 		static public void toggle(Enum flag)
 		{
+			// todo : don't replace, overlap
+			
 			toggles[flag.GetType()] = getMaskInt(flag);
 			//Debug.Log("toggle	" + flag + " & " + toggles[flag.GetType()]);
 			save(flag);
 		}
 
+		/// <summary>
+		/// check if value is toggled:on
+		/// </summary>
 		static public bool isToggled(Enum enumSpecificValue)
 		{
 			Type t = enumSpecificValue.GetType();
