@@ -102,7 +102,11 @@ namespace fwp.verbosity
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
         static public void universal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
-            => Verbosity.logFilter(section, content, context);
+            => Verbosity.logFilter(section, content, context, hex);
+
+        [Conditional(Verbosity.SYMBOL_VERBOSITY)]
+        static public void unity(VerbosityUnity section, string content, object context = null, string hex = null)
+            => Verbosity.logFilter(section, content, context, hex);
 
 
     }
