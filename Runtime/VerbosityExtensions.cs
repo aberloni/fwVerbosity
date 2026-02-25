@@ -102,11 +102,18 @@ namespace fwp.verbosity
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
         public void universal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
-            => Verbosity.logFilter(section, content, context, hex);
+            => Verbosity.logEnum(section, content, context, hex);
 
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
         public void unity(VerbosityUnity section, string content, object context = null, string hex = null)
-            => Verbosity.logFilter(section, content, context, hex);
+            => Verbosity.logEnum(section, content, context, hex);
+
+        /// <summary>
+        /// generic enum
+        /// </summary>
+        [Conditional(Verbosity.SYMBOL_VERBOSITY)]
+        public void filter(System.Enum section, string content, object context = null, string hex = null)
+            => Verbosity.logEnum(section, content, context, hex);
 
 
     }

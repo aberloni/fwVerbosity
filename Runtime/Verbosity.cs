@@ -144,10 +144,6 @@ namespace fwp.verbosity
 			return val;
 		}
 
-		[Conditional(Verbosity.SYMBOL_VERBOSITY)]
-		static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
-			=> logEnum(enumValue, content, context, hex);
-
 		static string wrapHexColor(string context, string hex)
 		{
 			return $" <b><color=#{hex}>{context}</color></b> ";
@@ -162,7 +158,7 @@ namespace fwp.verbosity
 		}
 
 		[Conditional(SYMBOL_VERBOSITY)]
-		static void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
+		static public void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
 		{
 			bool toggled = isToggled(enumValue);
 
