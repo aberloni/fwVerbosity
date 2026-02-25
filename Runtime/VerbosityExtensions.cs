@@ -57,12 +57,12 @@ namespace fwp.verbosity
 
         static Verbose()
         {
-#if VERBOSITY
+#if verbosity
 			_logger = new();
 #endif
         }
 
-        public static Verbose Logger => _logger;
+        public static Verbose v => _logger;
 
         public const string color_pink_light = "ec3ef2"; // input
         public const string color_green_light = "7df27f"; // flow
@@ -74,7 +74,7 @@ namespace fwp.verbosity
         /// major app event
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void app(string context, string msg)
+        public void app(string context, string msg)
             => Verbosity.logCategory("app", context, msg, color_blue_light);
 
         /// <summary>
@@ -82,11 +82,11 @@ namespace fwp.verbosity
         /// major game flow event
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void flow(string context, string msg)
+        public void flow(string context, string msg)
             => Verbosity.logCategory("flow", context, msg, color_green_light);
 
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void input(string context, string msg)
+        public void input(string context, string msg)
             => Verbosity.logCategory("input", context, msg, color_pink_light);
 
         /// <summary>
@@ -94,18 +94,18 @@ namespace fwp.verbosity
         /// major game flow event
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void issue(string context, string msg)
+        public void issue(string context, string msg)
             => Verbosity.logCategory("issue", context, msg, color_red_light);
 
         /// <summary>
         /// log universal
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void universal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
+        public void universal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
             => Verbosity.logFilter(section, content, context, hex);
 
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        static public void unity(VerbosityUnity section, string content, object context = null, string hex = null)
+        public void unity(VerbosityUnity section, string content, object context = null, string hex = null)
             => Verbosity.logFilter(section, content, context, hex);
 
 

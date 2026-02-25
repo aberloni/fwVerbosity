@@ -13,7 +13,7 @@ namespace fwp.verbosity
 	/// </summary>
 	static public class Verbosity
 	{
-		public const string SYMBOL_VERBOSITY = "VERBOSITY";
+		public const string SYMBOL_VERBOSITY = "verbosity";
 
 		public const string _ppref_prefix = "ppref_";
 		public const string _tab = "   ";
@@ -147,7 +147,7 @@ namespace fwp.verbosity
 		[Conditional(Verbosity.SYMBOL_VERBOSITY)]
 		static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
 			=> logEnum(enumValue, content, context, hex);
-		
+
 		static string wrapHexColor(string context, string hex)
 		{
 			return $" <b><color=#{hex}>{context}</color></b> ";
@@ -199,9 +199,9 @@ namespace fwp.verbosity
 		[UnityEditor.MenuItem("Window/Verbosity/test logs")]
 		static void miTestLogs()
 		{
-			Verbose.app("app", "things to say");
-			Verbose.flow("flow", "things to say");
-			Verbose.issue("issue", "things to say");
+			Verbose.v.app("app", "things to say");
+			Verbose.v.flow("flow", "things to say");
+			Verbose.v.issue("issue", "things to say");
 		}
 #endif
 	}
