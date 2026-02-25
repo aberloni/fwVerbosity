@@ -1,63 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Diagnostics;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+using UnityEngine;
 
 namespace fwp.verbosity
 {
-
-	public interface iVerbose
-	{
-
-		public enum VerbLevel
-		{
-			none = 0,
-			verbose = 1,
-			deep = 2,
-		}
-
-		public bool isVerbose(VerbLevel lvl);
-		public string stamp();
-	}
-
 	/// <summary>
-	/// The following color names are supported:
-	/// black, blue, green, orange, purple, red, white, and yellow.
-	/// </summary>
-	[System.Flags]
-	public enum VerbositySectionUniversal
-	{
-		none = 0,
-		engine = 1 << 1,
-		loading = 1 << 2,
-
-		input = 1 << 3,
-		addressables = 1 << 4,
-		audio = 1 << 5,
-		localization = 1 << 6,
-		ui = 1 << 7,
-
-		shader = 1 << 8,
-		all = ~0,
-	}
-
-	/// <summary>
+	/// #if VERBOSITY
+	/// 
 	/// a manager to toggle sections of verbosity
 	/// </summary>
 	static public class Verbosity
 	{
+		public const string SYMBOL_VERBOSITY = "VERBOSITY";
+
 		public const string _ppref_prefix = "ppref_";
-
 		public const string _tab = "   ";
-
-		public const string color_pink_light = "ec3ef2"; // input
-		public const string color_green_light = "7df27f"; // flow
-		public const string color_red_light = "f23e3e"; // issue
-		public const string color_blue_light = "3e83f2"; // app
 
 		/// <summary>
 		/// Enum type & bitmask
@@ -99,7 +58,7 @@ namespace fwp.verbosity
 		/// </summary>
 		static public void clear()
 		{
-			foreach(var to in toggles)
+			foreach (var to in toggles)
 			{
 				Enum val = (Enum)Enum.ToObject(to.Key, 0);
 				Verbosity.toggle(Verbosity.getMaskEnum(to.Key));
@@ -111,7 +70,7 @@ namespace fwp.verbosity
 		/// </summary>
 		static public void clear(Type eType)
 		{
-			if(toggles.ContainsKey(eType))
+			if (toggles.ContainsKey(eType))
 			{
 				toggles[eType] = 0;
 			}
@@ -165,7 +124,7 @@ namespace fwp.verbosity
 			Type t = flag.GetType();
 			int sVal = (int)Enum.ToObject(t, flag);
 
-			EditorPrefs.SetInt(_ppref_prefix + t.ToString(), sVal);
+			UnityEditor.EditorPrefs.SetInt(_ppref_prefix + t.ToString(), sVal);
 			//Debug.Log("save	#" + flag.GetType() + "=" + flag + " & " + sVal);
 #endif
 		}
@@ -179,60 +138,30 @@ namespace fwp.verbosity
 			int val = 0;
 
 #if UNITY_EDITOR
-			val = EditorPrefs.GetInt(_ppref_prefix + enumType.ToString(), 0);
+			val = UnityEditor.EditorPrefs.GetInt(_ppref_prefix + enumType.ToString(), 0);
 #endif
 
 			return val;
 		}
 
+		[Conditional(Verbosity.SYMBOL_VERBOSITY)]
+		static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
+			=> logEnum(enumValue, content, context, hex);
+		
 		static string wrapHexColor(string context, string hex)
 		{
 			return $" <b><color=#{hex}>{context}</color></b> ";
 		}
 
-		/// <summary>
-		/// unfiltered log, visible in build
-		/// major app event
-		/// </summary>
-		static public void logApp(string context, string msg)
-			=> logCategory("app", context, msg, color_blue_light);
-		
-		/// <summary>
-		/// unfiltered log, visible in build
-		/// major game flow event
-		/// </summary>
-		static public void logFlowPillar(string context, string msg)
-			=> logCategory("flow", context, msg, color_green_light);
-
-		static public void logInput(string context, string msg) 
-			=> logCategory("input", context, msg, color_pink_light);
-
-		/// <summary>
-		/// unfiltered log, visible in build
-		/// major game flow event
-		/// </summary>
-		static public void logIssue(string context, string msg)
-			=> logCategory("issue", context, msg, color_red_light);
-
-		static void logCategory(string category, string context, string msg, string color)
+		[Conditional(SYMBOL_VERBOSITY)]
+		static public void logCategory(string category, string context, string msg, string color)
 		{
-			msg = wrapHexColor(category+"." + context, color) + _tab + _tab + msg;
+			msg = wrapHexColor(category + "." + context, color) + _tab + _tab + msg;
 			VerbosityBroadcast.logEvent(category, msg);
 			ulog(msg);
 		}
 
-		static public void logNone(string content, object context = null, string hex = null)
-			=> logEnum(VerbositySectionUniversal.none, content, context, hex);
-
-		/// <summary>
-		/// log universal
-		/// </summary>
-		static public void logUniversal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
-			=> logEnum(section, content, context);
-
-		static public void logFilter(Enum enumValue, string content, object context = null, string hex = null)
-			=> logEnum(enumValue, content, context, hex);
-
+		[Conditional(SYMBOL_VERBOSITY)]
 		static void logEnum(Enum enumValue, string msg, object context = null, string hex = null)
 		{
 			bool toggled = isToggled(enumValue);
@@ -248,6 +177,7 @@ namespace fwp.verbosity
 			ulog(msg, context);
 		}
 
+		[Conditional(SYMBOL_VERBOSITY)]
 		static void ulog(string msg, object tar = null)
 		{
 			string stamp = $"({Time.frameCount})" + _tab; // (fframe count)  
@@ -262,16 +192,16 @@ namespace fwp.verbosity
 
 			stamp += _tab; // separator
 
-			Debug.Log(stamp + msg, uo);
+			UnityEngine.Debug.Log(stamp + msg, uo);
 		}
 
 #if UNITY_EDITOR
-		[MenuItem("Window/Verbosity/test logs")]
+		[UnityEditor.MenuItem("Window/Verbosity/test logs")]
 		static void miTestLogs()
 		{
-			Verbosity.logApp("app", "things to say");
-			Verbosity.logFlowPillar("flow", "things to say");
-			Verbosity.logIssue("issue", "things to say");
+			Verbose.app("app", "things to say");
+			Verbose.flow("flow", "things to say");
+			Verbose.issue("issue", "things to say");
 		}
 #endif
 	}
@@ -302,7 +232,7 @@ namespace fwp.verbosity
 
 		static public void logEvent(string category, string msg)
 		{
-			if(eventBroadcast.ContainsKey(category))
+			if (eventBroadcast.ContainsKey(category))
 			{
 				eventBroadcast[category]?.Invoke(msg);
 			}
