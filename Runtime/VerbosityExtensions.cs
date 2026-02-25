@@ -40,7 +40,7 @@ namespace fwp.verbosity
     public enum VerbosityUnity
     {
         none = 0,
-        input_system = 1 << 1,
+        inputSystem = 1 << 1,
         canvas = 1 << 2,
         addressables = 1 << 3,
         all = ~0,

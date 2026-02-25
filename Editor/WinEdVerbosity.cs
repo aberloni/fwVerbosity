@@ -29,7 +29,10 @@ namespace fwp.verbosity
 		/// function to override to add more types to feature
 		/// </summary>
 		virtual protected List<Type> getInjectionCandidates()
-			=> new List<Type>() { typeof(VerbositySectionUniversal) };
+			=> new List<Type>() {
+				typeof(VerbositySectionUniversal),
+				typeof(VerbosityUnity),
+			};
 
 		/// <summary>
 		/// win editor draw
