@@ -73,6 +73,12 @@ namespace fwp.verbosity
 					Verbosity.toggle(Verbosity.getMaskEnum(enumTypes[i]));
 				}
 			}
+#if verbosity
+			GUILayout.Label("verbosity is ON");
+#else
+			GUILayout.Label("verbosity is OFF");
+			GUILayout.Label("please add #if verbosity in scriptable symbols");
+#endif
 		}
 
 		virtual protected void drawFooter()
