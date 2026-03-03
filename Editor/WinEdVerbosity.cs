@@ -30,7 +30,7 @@ namespace fwp.verbosity
 		/// </summary>
 		virtual protected List<Type> getInjectionCandidates()
 			=> new List<Type>() {
-				typeof(VerbositySectionUniversal),
+				typeof(VerbosityUniversal),
 				typeof(VerbosityUnity),
 			};
 

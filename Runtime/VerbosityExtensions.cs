@@ -22,7 +22,7 @@ namespace fwp.verbosity
     /// black, blue, green, orange, purple, red, white, and yellow.
     /// </summary>
     [System.Flags]
-    public enum VerbositySectionUniversal
+    public enum VerbosityUniversal
     {
         none = 0,
         engine = 1 << 1,
@@ -30,19 +30,24 @@ namespace fwp.verbosity
 
         input = 1 << 3,
         audio = 1 << 4,
-        localization = 1 << 5,
-        ui = 1 << 6,
+        save = 1 << 5,
+        localization = 1 << 6,
 
         shader = 1 << 7,
+        profiling = 1 << 8,
+
         all = ~0,
     }
 
     public enum VerbosityUnity
     {
         none = 0,
+        
         inputSystem = 1 << 1,
         canvas = 1 << 2,
         addressables = 1 << 3,
+        editor = 1 << 4,
+
         all = ~0,
     }
 
@@ -58,7 +63,7 @@ namespace fwp.verbosity
         static Verbose()
         {
 #if verbosity
-			_logger = new();
+            _logger = new();
 #endif
         }
 
@@ -101,7 +106,7 @@ namespace fwp.verbosity
         /// log universal
         /// </summary>
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
-        public void universal(VerbositySectionUniversal section, string content, object context = null, string hex = null)
+        public void universal(VerbosityUniversal section, string content, object context = null, string hex = null)
             => Verbosity.logEnum(section, content, context, hex);
 
         [Conditional(Verbosity.SYMBOL_VERBOSITY)]
